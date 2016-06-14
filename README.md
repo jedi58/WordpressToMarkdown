@@ -13,3 +13,18 @@ WordpressToMarkDown::print('https://jedi58.wordpress.com/trips/20134-antarctica/
 ```php
 WordpressToMarkDown::save('https://jedi58.wordpress.com/trips/20134-antarctica/', __DIR__ . 'output/');
 ```
+
+## Creating a Wordpress Archive Page
+
+* Create a new page
+* Add `[display-posts posts_per_page="100" order="DESC"]` as the content
+ 
+This will add a list of your posts to the page so that when you save and view the page they will all be listed as links. If you have more than 100 posts, the limit for the code is 100 so you will need to include an offset. If for example you have over 200 posts you could use:
+
+```
+[display-posts posts_per_page="100" order="DESC"]
+[display-posts posts_per_page="100" offset="100" order="DESC"]
+[display-posts posts_per_page="100" offset="200" order="DESC"]
+```
+
+This will then add three lists to the page, all of which will be processed.
