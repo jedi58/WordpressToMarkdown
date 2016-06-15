@@ -1,0 +1,26 @@
+{
+    "name": "jedi58/WordpressToMarkdown",
+    "type": "library",
+    "description": "Component for converting Wordpress posts/sites to Markdown; includes console application",
+    "keywords": [ "Wordpress", "Markdown" ],
+    "homepage": "https://github.com/jedi58/WordpressToMarkdown",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David G. Paul"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/console": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": { "jedi58\\WordpressToMarkdown\\": "src/" },
+        "exclude-from-classmap": [
+            "/tests/"
+        ]
+    }
+}
