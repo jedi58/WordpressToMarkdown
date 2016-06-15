@@ -6,7 +6,7 @@ When instantiating this object you pass in the URL to parse. If this URL is a po
 
 **Output page to stdout**
 ```php
-WordpressToMarkDown::print('https://jedi58.wordpress.com/trips/20134-antarctica/');
+WordpressToMarkDown::output('https://jedi58.wordpress.com/trips/20134-antarctica/');
 ```
 
 **Output page to file**
