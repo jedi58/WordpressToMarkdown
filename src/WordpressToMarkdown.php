@@ -81,7 +81,7 @@ class WordpressToMarkdown
             );
             self::$post['title'] = trim($match[0]);
             self::$post['subTitle'] = !empty($match[1]) ? trim($match[1]) : null;
-        }   
+        }
     }
     /**
      * Parses the postDate from the retrieved content.
@@ -177,9 +177,9 @@ class WordpressToMarkdown
     {
         $filename = rtrim(
             !empty($options['path']) && is_dir($options['path']) ?
-                $options['path'] : 
+                $options['path'] :
                 __DIR__,
-            '/') . '/' . 
+            '/') . '/' .
             preg_replace('/(-|T[0-9\-\+\:]+)/', '', self::$post['postDate']) .
             '.md';
         $fh = fopen($filename, 'w');
@@ -209,4 +209,3 @@ class WordpressToMarkdown
         self::processUrl($url, $options, 'self::savePost');
     }
 }
-
