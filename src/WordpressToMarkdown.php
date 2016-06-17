@@ -148,7 +148,7 @@ class WordpressToMarkdown
      */
     private static function parseCategory()
     {
-        preg_match('/under <a href=".*?\/category\/(.*)" rel="category tag"/', self::$content, $match);
+        preg_match_all('/<a href="[^"]+\/category\/([^"]+)" rel="category tag">/', self::$content, $match);
         if (!empty($match[1])) {
             self::$post['category'] = $match[1];
         }
@@ -169,7 +169,7 @@ class WordpressToMarkdown
                 null
             ) .
             (!empty(self::$post['category']) ?
-                self::$post['category'] . PHP_EOL:
+                implode(PHP_EOL, self::$post['category']) . PHP_EOL :
                 null
             ) .
             PHP_EOL .
