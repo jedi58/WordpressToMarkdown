@@ -72,7 +72,7 @@ class WordpressToMarkdown
         self::parseCategory();
         self::parsePostDate();
         self::parseContent();
-        call_user_func($callback, self::formatOutput());
+        call_user_func($callback, self::formatOutput(), $options);
     }
     /**
      * Parse the title of the page from the retrieved content. This will split the title on the
@@ -179,7 +179,7 @@ class WordpressToMarkdown
      * Saves the provided post to a file named by the post date
      * @param string[] $post The post to save to file
      */
-    private static function savePost($post)
+    private static function savePost($post, $options)
     {
         $filename = rtrim(
             !empty($options['path']) && is_dir($options['path']) ?
@@ -196,7 +196,7 @@ class WordpressToMarkdown
      * Prints the post to the current `stdout`
      * @param string[] $post The post to output
      */
-    private static function printPost($post)
+    private static function printPost($post, $options)
     {
         print $post;
     }
