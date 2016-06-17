@@ -54,7 +54,7 @@ class WordpressToMarkdown
      * @param string $callback The name of the method to use for handling parsed post(s)
      * @return void
      */
-    private static function processUrl($url, $options = array(), $callback)
+    private static function processUrl($url, $options = array(), $callback = 'self::printPost')
     {
         self::fetchUrl($url);
         preg_match_all(
