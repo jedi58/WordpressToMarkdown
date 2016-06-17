@@ -27,6 +27,8 @@ class WordpressToMarkdown
      * Retrieve the contents of a Wordpress page for parsing. It will default to
      * use cURL but will fall back to `file_get_contents` if not available.
      * @param string $url The URL of the page to retrieve
+     * @return void
+     * @throws \Exception
      */
     private static function fetchUrl($url)
     {
@@ -49,11 +51,16 @@ class WordpressToMarkdown
      * @param string $url The URL to parse
      * @param string[] $options Optional
      * @param string $callback The name of the method to use for handling parsed post(s)
+     * @return void
      */
     private static function processUrl($url, $options = array(), $callback)
     {
         self::fetchUrl($url);
-        preg_match_all('/<li.*?class="listing-item".*?>[\w\W]*?<a.*?href="(.*?)".*?>[\w\W]*?<\/a><\/li>/', self::$content, $match);
+        preg_match_all(
+            '/<li.*?class="listing-item".*?>[\w\W]*?<a.*?href="(.*?)".*?>[\w\W]*?<\/a><\/li>/',
+            self::$content,
+            $match
+        );
         if (!empty($match[1])) {
             foreach ($match[1] as $url) {
                 self::processUrl($url, $options, $callback);
@@ -106,8 +113,9 @@ class WordpressToMarkdown
                 array(
                     '/<div.*?wp-caption.*?>[\w\W]*?href="(.*?)"[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
                     '/<div.*?wp-caption.*?>[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
+                    '/<p.*?class="embed-youtube".*?src=[\'"](.*?)[\'"].*?<\/p>/',
                     '/<div class="wpcnt">[\w\W]*$/',
-                    '/<(p|\/blockquote|<\/?ul>)>/',
+                    '/<(p|\/blockquote|\/?ul>|\/li>)>/',
                     '/<\/p>/',
                     '/<div class="entry-content">[\W]*/',
                     '/<a.*?href="(.*?)".*?>(.*?)<\/a>/',
@@ -116,11 +124,14 @@ class WordpressToMarkdown
                     '/<\/?strong>/',
                     '/<blockquote>/',
                     '/<li.*?>/',
-                    '/<\/pre>/'
+                    '/<\/pre>/',
+                    '/<div.*?class="geo.*?>[\w\W]+?<\/div>/',
+                    '/<br.*\/>/'
                 ),
                 array(
                     '[![$3]($2)]($1)',
                     '![$2]($1)',
+                    '![Video]($1)',
                     '',
                     '',
                     PHP_EOL,
@@ -131,7 +142,9 @@ class WordpressToMarkdown
                     '**',
                     '>',
                     '-',
-                    '```'
+                    '```',
+                    '',
+                    PHP_EOL
                 ),
                 html_entity_decode($match[0])
             ));
