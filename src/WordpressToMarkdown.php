@@ -28,8 +28,8 @@ class WordpressToMarkdown
      */
     protected static $content = '';
     /**
-     * Retrieve the contents of a Wordpress page for parsing. It will default to
-     * use cURL but will fall back to `file_get_contents` if not available.
+     * Retrieve the contents of a Wordpress page for parsing using PSR-7
+     * compatible {@link \GuzzleHttp\Client}
      * @param string $url The URL of the page to retrieve
      * @throws \Exception
      */
