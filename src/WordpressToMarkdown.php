@@ -185,9 +185,8 @@ class WordpressToMarkdown
             !empty($options['path']) && is_dir($options['path']) ?
                 $options['path'] :
                 __DIR__,
-            '/') . '/' .
-            preg_replace('/(-|T[0-9\-\+\:]+)/', '', self::$post['postDate']) .
-            '.md';
+            '/'
+        ) . '/' . self::getYmdFromPostDate() . '.md';
         $fh = fopen($filename, 'w');
         fwrite($fh, $post);
         fclose($fh);
@@ -199,6 +198,15 @@ class WordpressToMarkdown
     private static function printPost($post, $options)
     {
         print $post;
+    }
+    /**
+     * Takes the post date for the current post and returns the date
+     * in the format YYYYMMDD
+     * @return string The formatted date string
+     */
+    public static function getYmdFromPostDate()
+    {
+        return preg_replace('/(-|T[0-9\-\+\:]+)/', '', self::$post['postDate']);
     }
     /**
      * Processes and outputs the specified URL(s) to `stdout`
