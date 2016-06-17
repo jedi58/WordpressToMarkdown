@@ -1,5 +1,9 @@
 <?php
 
+namespace Jedi58\WordpressToMarkdown;
+
+use GuzzleHttp\Client;
+
 /**
  * Object to convert a Wordpress site or post to markdown
  */
@@ -27,24 +31,21 @@ class WordpressToMarkdown
      * Retrieve the contents of a Wordpress page for parsing. It will default to
      * use cURL but will fall back to `file_get_contents` if not available.
      * @param string $url The URL of the page to retrieve
-     * @return void
      * @throws \Exception
      */
     private static function fetchUrl($url)
     {
-        if (function_exists('curl_init')) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'WordpressToMarkdown-Parser/' . self::VERSION);
-            self::$content = curl_exec($ch);
-            curl_close($ch);
-            return;
-        } elseif (ini_get('allow_url_fopen') == true) {
-            self::$content = file_get_contents($url);
+        $client = new \GuzzleHttp\Client([
+            'connect_timeout' => 10,
+            'headers' => [
+                'User-Agent' => 'WordpressToMarkdown-Parser/' . self::VERSION
+            ]
+        ]);
+        $result = $client->get($url);
+        if ($result->getStatusCode() >= 400) {
+            throw new \Exception(printf('Failed to request %s', $url));
         }
-        throw new \Exception(printf('Could not retrieve content from %s', $url));
+        self::$content = (string) $result->getBody();
     }
     /**
      * Processes the contents of the specified URL and parses the contents
@@ -114,10 +115,7 @@ class WordpressToMarkdown
                     '/<div.*?wp-caption.*?>[\w\W]*?href="(.*?)"[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
                     '/<div.*?wp-caption.*?>[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
                     '/<p.*?class="embed-youtube".*?src=[\'"](.*?)[\'"].*?<\/p>/',
-                    '/<div class="wpcnt">[\w\W]*$/',
-                    '/<(p|\/blockquote|\/?ul>|\/li>)>/',
-                    '/<\/p>/',
-                    '/<div class="entry-content">[\W]*/',
+                    '/(<\/p>|<br.*\/>)/',
                     '/<a.*?href="(.*?)".*?>(.*?)<\/a>/',
                     '/<img.*?src="(.*?)".*?\/>/',
                     '/<\/?em>/',
@@ -125,26 +123,21 @@ class WordpressToMarkdown
                     '/<blockquote>/',
                     '/<li.*?>/',
                     '/<\/pre>/',
-                    '/<div.*?class="geo.*?>[\w\W]+?<\/div>/',
-                    '/<br.*\/>/'
+                    '/(<p>|<\/blockquote>|<\/?ul>|<\/li>|<div class="wpcnt">[\w\W]*|<div.*?class="geo.*?>[\w\W]+?<\/div>|<div class="entry-content">[\W]*?)/'
                 ),
                 array(
                     '[![$3]($2)]($1)',
                     '![$2]($1)',
                     '![Video]($1)',
-                    '',
-                    '',
                     PHP_EOL,
-                    '',
                     '[$2]($1)',
                     '![ ]($1)',
                     '_',
                     '**',
-                    '>',
-                    '-',
+                    '> ',
+                    '- ',
                     '```',
-                    '',
-                    PHP_EOL
+                    ''
                 ),
                 html_entity_decode($match[0])
             ));
