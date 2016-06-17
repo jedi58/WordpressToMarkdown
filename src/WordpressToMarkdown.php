@@ -83,7 +83,7 @@ class WordpressToMarkdown
         preg_match('/<h1 class=\"entry\-title\">(.*)<\/h1>/', self::$content, $match);
         if (!empty($match[1])) {
             $match = mb_split(
-                '[-–]',
+                '[^0-9]([-–])[^0-9]',
                 html_entity_decode($match[1]),
                 2
             );
