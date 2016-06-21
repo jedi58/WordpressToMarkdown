@@ -111,6 +111,16 @@ class WordpressToMarkdown
     {
         preg_match('/<div class="entry-content">([\w\W]*?)<!-- .entry-content -->/', self::$content, $match);
         if (!empty($match[0])) {
+            $match[0] = preg_replace_callback('/<ol>[\w\W]+?<\/ol>/', function ($m) 
+            {
+                $count = 1;
+                $list = preg_replace_callback('/<li>([\w\W]+?)<\/li>/', function ($m2) use (&$count) {
+                    return ($count++) . ' ' . $m2[1];
+                }, $m);
+                return $list[0];
+            }, $match[0]);
+
+
             self::$post['content'] = trim(strip_tags(preg_replace(
                 array(
                     '/<h1>/',
