@@ -12,6 +12,13 @@ WordpressToMarkDown::output('https://jedi58.wordpress.com/trips/20134-antarctica
 **Output page to file**
 ```php
 WordpressToMarkDown::save(
+    'https://jedi58.wordpress.com/trips/20134-antarctica/'
+);
+```
+
+**Output page to file, specifying location**
+```php
+WordpressToMarkDown::save(
     'https://jedi58.wordpress.com/trips/20134-antarctica/',
     array('path' => __DIR__ . '/output/')
 );
