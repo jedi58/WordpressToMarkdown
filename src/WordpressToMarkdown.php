@@ -111,8 +111,14 @@ class WordpressToMarkdown
     {
         preg_match('/<div class="entry-content">([\w\W]*?)<!-- .entry-content -->/', self::$content, $match);
         if (!empty($match[0])) {
-            self::$post['content'] = trim(preg_replace(
+            self::$post['content'] = trim(strip_tags(preg_replace(
                 array(
+                    '/<h1>/',
+                    '/<h2>/',
+                    '/<h3>/',
+                    '/<h4>/',
+                    '/<h5>/',
+                    '/<h6>/',
                     '/<div.*?wp-caption.*?>[\w\W]*?href="(.*?)"[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
                     '/<div.*?wp-caption.*?>[\w\W]*?src="(.*?)"[\w\W]*?class="wp-caption-text".*?>([\w\W]+?)<\/p><\/div>/',
                     '/<p.*?class="embed-youtube".*?src=[\'"](.*?)[\'"].*?<\/p>/',
@@ -123,10 +129,22 @@ class WordpressToMarkdown
                     '/<\/?strong>/',
                     '/<blockquote>/',
                     '/<li.*?>/',
-                    '/<\/pre>/',
-                    '/(<p>|<\/blockquote>|<\/?ul>|<\/li>|<div class="wpcnt">[\w\W]*|<div.*?class="geo.*?>[\w\W]+?<\/div>|<div class="entry-content">[\W]*?)/'
+                    '/<\/?pre>/',
+                    '/<\/?del>/',
+                    '/<span style="text-decoration:underline;">([^<]+)<\/span>/',
+                    '/<hr.*?\/?>/',
+                    '/<p style="padding-left:30px;">([\w\W]+?)<\/p>/',
+                    '/(<\/h[1-6]>|<p>|<\/blockquote>|<\/?[uo]l>|<\/li>|\<!\-\- .*? \-\->)/',
+                    '/(<div class="wpcnt">[\w\W]*|<div.*?class="geo.*?>[\w\W]+?<\/div>|<div class="entry-content">[\W]*?)/',
+                    '/<div[\w\W]+id="jp-post-flair"[\w\W]+>[\w\W]+<\/div>/'
                 ),
                 array(
+                    '# ',
+                    '## ',
+                    '### ',
+                    '#### ',
+                    '##### ',
+                    '###### ',
                     '[![$3]($2)]($1)',
                     '![$2]($1)',
                     '![Video]($1)',
@@ -138,10 +156,16 @@ class WordpressToMarkdown
                     '> ',
                     '- ',
                     '```',
+                    '~~',
+                    '__$1__',
+                    '---',
+                    '    $2',
+                    '',
+                    '',
                     ''
                 ),
                 html_entity_decode($match[0])
-            ));
+            )));
         }
     }
     /**
