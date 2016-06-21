@@ -111,11 +111,11 @@ class WordpressToMarkdown
     {
         preg_match('/<div class="entry-content">([\w\W]*?)<!-- .entry-content -->/', self::$content, $match);
         if (!empty($match[0])) {
-            $match[0] = preg_replace_callback('/<ol>[\w\W]+?<\/ol>/', function ($m) {
+            self::$post['content'] = preg_replace_callback('/<ol>[\w\W]+?<\/ol>/', function ($orderedList) {
                 $count = 1;
-                $list = preg_replace_callback('/<li>([\w\W]+?)<\/li>/', function ($m2) use (&$count) {
-                    return ($count++) . ' ' . $m2[1];
-                }, $m);
+                $list = preg_replace_callback('/<li>([\w\W]+?)<\/li>/', function ($listItem) use (&$count) {
+                    return ($count++) . ' ' . $listItem[1];
+                }, $orderedList);
                 return $list[0];
             }, $match[0]);
 
@@ -173,7 +173,7 @@ class WordpressToMarkdown
                     '',
                     ''
                 ),
-                html_entity_decode($match[0])
+                html_entity_decode(self::$post['content'])
             )));
         }
     }
