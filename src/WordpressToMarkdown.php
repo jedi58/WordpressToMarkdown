@@ -65,6 +65,7 @@ class WordpressToMarkdown
         if (!empty($match[1])) {
             foreach ($match[1] as $url) {
                 self::processUrl($url, $options, $callback);
+                sleep(1);
             }
             return;
         }
