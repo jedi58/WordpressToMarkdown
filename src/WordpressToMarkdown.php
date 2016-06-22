@@ -119,6 +119,25 @@ class WordpressToMarkdown
                 return $list[0];
             }, $match[0]);
 
+            self::$post['content'] = preg_replace_callback('/<table[\w\W]+?>([\w\W]+?)<\/table>/', function ($table) {
+                $mdTable = preg_replace(
+                    array(
+                        '/>[\s\t]+?</',
+                        '/<(\/?(table|thead|tbody)|td|th)>/',
+                        '/<\/tr>/',
+                        '/<(tr|\/td|\/th)>/'
+                    ),
+                    array(
+                        '><',
+                        '',
+                        PHP_EOL,
+                        '|'
+                    ),
+                    $table
+                );
+                return $mdTable[1];
+            }, self::$post['content']);
+
 
             self::$post['content'] = trim(strip_tags(preg_replace(
                 array(
